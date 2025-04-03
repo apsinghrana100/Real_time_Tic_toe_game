@@ -19,7 +19,10 @@ const __dirname = path.dirname(__filename);
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin:[
+      "http://localhost:3000",  // For local development
+      "https://real-time-tic-toe-game-4.onrender.com"  // Your deployed frontend
+    ],
     methods: ["GET", "POST"],
   },
 });
@@ -29,7 +32,7 @@ const PORT = process.env.PORT || 5000;
 // 🔹 Middleware (Order Matters)
 app.use(cors());
 app.use(cors({
-  origin: "https://real-time-tic-toe-game-3.onrender.com", // Replace with your actual frontend URL
+  origin: "https://real-time-tic-toe-game-4.onrender.com", // Replace with your actual frontend URL
   methods: ["GET", "POST"],
   credentials: true
 }));
