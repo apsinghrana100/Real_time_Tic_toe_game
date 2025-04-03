@@ -1,25 +1,19 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg";
+import "./App.css";
+import LandingPage from "./component/LandingPage";
+
+import { createBrowserRouter, RouterProvider } from "react-router";
+import { lazy } from "react";
+const GamePage = lazy(()=>import('./component/gameBoard/gameBoard'));
+// import GamePage from "./component/gameBoard/gameBoard";
+
+const router = createBrowserRouter([
+  { path: "/", Component: LandingPage },
+  { path: "/gamepage",Component: GamePage },
+]);
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;

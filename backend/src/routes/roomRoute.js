@@ -1,16 +1,16 @@
 import express from 'express';
-import Room from '../models/roomModel';
+import Room from '../models/roomModel.js';
 
 
 const roomRouter = express.Router();
 
 roomRouter.post('/roomCreate',async(req,res)=>{
-    const {firstName} = req.params;
+    const {playerFirst} = req.body;
   
     try {
-        const newRoom = await Room.create({ firstPlayer: firstName });
+        const newRoom = await Room.create({ firstPlayer: playerFirst });
         console.log("✅ Room Created:", newRoom);
-        return res.status(201).json({success:true, msg:"successfully Room created", data:[]})
+        return res.status(201).json({success:true, msg:"successfully Room created", data:newRoom})
          // Returns the created document
       } catch (error) {
         console.error("❌ Error creating room:", error);
@@ -21,12 +21,13 @@ roomRouter.post('/roomCreate',async(req,res)=>{
 
 
 roomRouter.post("/joinRoom", async (req, res) => {
-  const { secondPlayer, roomId } = req.body; // Use req.body instead of req.params
+  const { playerSecond,
+    roomId } = req.body; // Use req.body instead of req.params
 
   try {
     const updatedRoom = await Room.findOneAndUpdate(
       { roomId: roomId }, // Find the room by roomId
-      { secondPlayer: secondPlayer }, // Set the second player
+      { secondPlayer: playerSecond }, // Set the second player
       { new: true } // Return the updated document
     );
 
@@ -47,6 +48,7 @@ roomRouter.post("/joinRoom", async (req, res) => {
   }
 });
 
+export default roomRouter;
 
 
 
