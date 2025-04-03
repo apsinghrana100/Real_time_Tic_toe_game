@@ -20,6 +20,7 @@ roomRouter.post('/roomCreate',async(req,res)=>{
 
 
 
+
 roomRouter.post("/joinRoom", async (req, res) => {
   const { playerSecond,
     roomId } = req.body; // Use req.body instead of req.params
@@ -48,6 +49,9 @@ roomRouter.post("/joinRoom", async (req, res) => {
   }
 });
 
+roomRouter.get("/test",(req,res)=>{
+  return res.status(200).json({ success: true, msg: "Failed to join the room" });
+})
 export default roomRouter;
 
 
