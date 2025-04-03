@@ -28,6 +28,11 @@ const PORT = process.env.PORT || 5000;
 
 // 🔹 Middleware (Order Matters)
 app.use(cors());
+app.use(cors({
+  origin: "https://real-time-tic-toe-game-3.onrender.com", // Replace with your actual frontend URL
+  methods: ["GET", "POST"],
+  credentials: true
+}));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());

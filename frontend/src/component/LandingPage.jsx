@@ -12,7 +12,7 @@ const LandingPage = () => {
 
   const onhandleCreateRoom = async () => {
     try {
-      const output = await axios.post(`http://localhost:5000/api/roomCreate`, {
+      const output = await axios.post(`https://real-time-tic-toe-game-3.onrender.com/api/roomCreate`, {
         playerFirst,
       });
 
@@ -28,7 +28,7 @@ const LandingPage = () => {
 
   const onhandleJoinRoom = async () => {
     try {
-      const output = await axios.post(`http://localhost:5000/api/joinRoom`, {
+      const output = await axios.post(`https://real-time-tic-toe-game-3.onrender.com/api/joinRoom`, {
         playerSecond,
         roomId,
       });
