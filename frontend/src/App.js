@@ -5,11 +5,10 @@ import LandingPage from "./component/LandingPage";
 import { createBrowserRouter, RouterProvider } from "react-router";
 import { lazy } from "react";
 const GamePage = lazy(()=>import('./component/gameBoard/gameBoard'));
-// import GamePage from "./component/gameBoard/gameBoard";
 
 const router = createBrowserRouter([
-  { path: ":roomId?", Component: LandingPage },
-  { path: "gamepage",Component: GamePage },
+  { path: "/:roomId?", Component: LandingPage },
+  { path: "/gamepage",Component: GamePage },
 ]);
 
 function App() {

@@ -81,7 +81,7 @@ io.on("connection", (socket) => {
   socket.on("resetgame", (roomId) => {
     if (games[roomId]) {
       games[roomId].board = Array(9).fill(null);
-      games[roomId].isXTurn = !games[roomId].isXTurn; // ✅ Corrected
+      games[roomId].isXTurn = isXTurn; // ✅ Corrected
       io.to(roomId).emit("updateGame", games[roomId]);
     }
   });
