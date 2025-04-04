@@ -138,12 +138,12 @@ const LandingPage = () => {
             </RoomIdBox>
 
             <RoomIdBox>
-              <RoomIdText>{`https://real-time-tic-toe-game-4.onrender.com/${roomId}`}</RoomIdText>
+              <RoomIdText>{`https://real-time-tic-toe-game.onrender.com/${roomId}`}</RoomIdText>
               <CopyButton
                 onClick={() =>
                   onhandleidcopied(
                     "copyLink",
-                    `https://real-time-tic-toe-game-4.onrender.com/${roomId}`
+                    `https://real-time-tic-toe-game.onrender.com/${roomId}`
                   )
                 }
               >
