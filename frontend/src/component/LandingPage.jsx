@@ -5,42 +5,51 @@ import { useNavigate, useParams } from "react-router";
 
 const LandingPage = () => {
   let params = useParams();
-  const [mode, setMode] = useState(null); // 'create' or 'join'
+  const [mode, setMode] = useState(null);
   const [playerFirst, setPlayerFirst] = useState(null);
   const [playerSecond, setPlayerSecond] = useState(null);
   const [roomId, setRoomId] = useState(null);
-  const [roomLink, setRoomLink] = useState("https://real-time-tic-toe-game-4.onrender.com/");
   const [iscopied, setIscopied] = useState({
     copyId: false,
     copyLink: false,
   });
+  const [showPopup, setShowPopup] = useState(false);
   const navigation = useNavigate();
 
   const onhandleCreateRoom = async () => {
     try {
       const output = await axios.post(
         `https://real-time-tic-toe-game-3.onrender.com/api/roomCreate`,
-        {
-          playerFirst
-        }
+        { playerFirst }
       );
 
-      alert(output.data.data.roomId);
-      localStorage.setItem("roomId", output.data.data.roomId);
-      setRoomId(output.data.data.roomId);
+      const room = output.data.data.roomId;
+      setRoomId(room);
+      localStorage.setItem("roomId", room);
       localStorage.setItem("firstplayer", output.data.data.firstPlayer);
-      navigation(`/gamepage`);
+      setShowPopup(true);
+
+      // Auto close after 10 seconds
+      setTimeout(() => {
+        setShowPopup(false);
+        navigation(`/gamepage`);
+      }, 10000);
     } catch (error) {
       alert("Something went wrong");
     }
   };
 
+  const handleClosePopup = () => {
+    setShowPopup(false);
+    navigation(`/gamepage`);
+  };
+
   const onhandleidcopied = (copything, copyitem) => {
     navigator.clipboard.writeText(copyitem);
-    setIscopied({ ...iscopied, [copything]: true });
+    setIscopied((pre)=>({ ...pre, [copything]: true }));
 
     setTimeout(() => {
-      setIscopied({ ...iscopied, [copything]: false });
+      setIscopied((pre)=>({ ...pre, [copything]: false }));
     }, 2000);
   };
 
@@ -63,14 +72,16 @@ const LandingPage = () => {
   };
 
   useEffect(() => {
-    if(params.roomId) {setRoomId(params.roomId);setMode("join")};
-
+    if (params.roomId) {
+      setRoomId(params.roomId);
+      setMode("join");
+    }
   }, []);
 
   return (
     <Container>
       <Card>
-        <Title>Tic-Tac-Toe Online(1vs1)</Title>
+        <Title>Tic-Tac-Toe Online (1vs1)</Title>
         <ButtonContainer>
           <Button onClick={() => setMode("create")} active={mode === "create"}>
             Create Room
@@ -94,32 +105,6 @@ const LandingPage = () => {
           </Form>
         )}
 
-        {mode === "create" && roomId && (
-          <>
-            <RoomIdBox>
-              <RoomIdText>{roomId}</RoomIdText>
-              <CopyButton
-                onClick={() => {
-                  onhandleidcopied("copyId", roomId);
-                }}
-              >
-                {iscopied.copyId ? "Copied" : "Copy"}
-              </CopyButton>
-            </RoomIdBox>
-
-            <RoomIdBox>
-              <RoomIdText>{`https://real-time-tic-toe-game-4.onrender.com/${roomId}`}</RoomIdText>
-              <CopyButton
-                onClick={() => {
-                  onhandleidcopied("copyLink",`https://real-time-tic-toe-game-4.onrender.com/${roomId}`);
-                }}
-              >
-                {iscopied.copyLink ? "Copied" : "Copy Link"}
-              </CopyButton>
-            </RoomIdBox>
-          </>
-        )}
-
         {mode === "join" && (
           <Form>
             <Input
@@ -138,6 +123,41 @@ const LandingPage = () => {
           </Form>
         )}
       </Card>
+
+      {showPopup && (
+        <PopupOverlay>
+          <PopupCard>
+            <h3>Room Created Successfully!</h3>
+            <p>Share this Room ID or Link with your friend:</p>
+
+            <RoomIdBox>
+              <RoomIdText>{roomId}</RoomIdText>
+              <CopyButton onClick={() => onhandleidcopied("copyId", roomId)}>
+                {iscopied.copyId ? "Copied" : "Copy"}
+              </CopyButton>
+            </RoomIdBox>
+
+            <RoomIdBox>
+              <RoomIdText>{`https://real-time-tic-toe-game-4.onrender.com/${roomId}`}</RoomIdText>
+              <CopyButton
+                onClick={() =>
+                  onhandleidcopied(
+                    "copyLink",
+                    `https://real-time-tic-toe-game-4.onrender.com/${roomId}`
+                  )
+                }
+              >
+                {iscopied.copyLink ? "Copied" : "Copy Link"}
+              </CopyButton>
+            </RoomIdBox>
+
+            <CloseButton onClick={handleClosePopup}>Close</CloseButton>
+            <p style={{ marginTop: "8px", fontSize: "0.8rem", color: "#aaa" }}>
+              This will auto-close in 10 seconds
+            </p>
+          </PopupCard>
+        </PopupOverlay>
+      )}
     </Container>
   );
 };
@@ -145,17 +165,18 @@ const LandingPage = () => {
 export default LandingPage;
 
 // 🔹 Styled Components
+
 const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: #121212; /* Dark Background */
+  background: #121212;
   color: white;
 `;
 
 const Card = styled.div`
-  background: #1e1e1e; /* Dark Card */
+  background: #1e1e1e;
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
@@ -234,6 +255,7 @@ const RoomIdText = styled.span`
   color: #fff;
   font-size: 1rem;
   font-weight: bold;
+  word-break: break-word;
 `;
 
 const CopyButton = styled.button`
@@ -247,5 +269,44 @@ const CopyButton = styled.button`
 
   &:hover {
     background-color: #00bfa5;
+  }
+`;
+
+const PopupOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
+
+const PopupCard = styled.div`
+  background: #1e1e1e;
+  padding: 2rem;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+`;
+
+const CloseButton = styled.button`
+  margin-top: 15px;
+  background: #ff1744;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.3s ease;
+
+  &:hover {
+    background: #d50000;
   }
 `;
