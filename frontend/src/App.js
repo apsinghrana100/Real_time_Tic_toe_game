@@ -8,8 +8,8 @@ const GamePage = lazy(()=>import('./component/gameBoard/gameBoard'));
 // import GamePage from "./component/gameBoard/gameBoard";
 
 const router = createBrowserRouter([
-  { path: "/:roomId?", Component: LandingPage },
-  { path: "/gamepage",Component: GamePage },
+  { path: ":roomId?", Component: LandingPage },
+  { path: "gamepage",Component: GamePage },
 ]);
 
 function App() {
