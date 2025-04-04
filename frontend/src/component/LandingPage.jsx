@@ -1,50 +1,76 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 const LandingPage = () => {
+  let params = useParams();
   const [mode, setMode] = useState(null); // 'create' or 'join'
   const [playerFirst, setPlayerFirst] = useState(null);
   const [playerSecond, setPlayerSecond] = useState(null);
   const [roomId, setRoomId] = useState(null);
+  const [roomLink, setRoomLink] = useState("https://real-time-tic-toe-game-4.onrender.com/");
+  const [iscopied, setIscopied] = useState({
+    copyId: false,
+    copyLink: false,
+  });
   const navigation = useNavigate();
 
   const onhandleCreateRoom = async () => {
     try {
-      const output = await axios.post(`https://real-time-tic-toe-game-3.onrender.com/api/roomCreate`, {
-        playerFirst,
-      });
+      const output = await axios.post(
+        `https://real-time-tic-toe-game-3.onrender.com/api/roomCreate`,
+        {
+          playerFirst
+        }
+      );
 
       alert(output.data.data.roomId);
-      localStorage.setItem("roomId",output.data.data.roomId)
-      localStorage.setItem("firstplayer",output.data.data.firstPlayer)
-      navigation(`/gamepage`)
-      
+      localStorage.setItem("roomId", output.data.data.roomId);
+      setRoomId(output.data.data.roomId);
+      localStorage.setItem("firstplayer", output.data.data.firstPlayer);
+      navigation(`/gamepage`);
     } catch (error) {
       alert("Something went wrong");
     }
   };
 
+  const onhandleidcopied = (copything, copyitem) => {
+    navigator.clipboard.writeText(copyitem);
+    setIscopied({ ...iscopied, [copything]: true });
+
+    setTimeout(() => {
+      setIscopied({ ...iscopied, [copything]: false });
+    }, 2000);
+  };
+
   const onhandleJoinRoom = async () => {
     try {
-      const output = await axios.post(`https://real-time-tic-toe-game-3.onrender.com/api/joinRoom`, {
-        playerSecond,
-        roomId,
-      });
+      const output = await axios.post(
+        `https://real-time-tic-toe-game-3.onrender.com/api/joinRoom`,
+        {
+          playerSecond,
+          roomId,
+        }
+      );
       alert(output.data.msg);
-      localStorage.setItem("secondPlayer",playerSecond)
-      localStorage.setItem("roomId",roomId)
-      navigation(`/gamepage`)
+      localStorage.setItem("secondPlayer", playerSecond);
+      localStorage.setItem("roomId", roomId);
+      navigation(`/gamepage`);
     } catch (error) {
       alert("something went wrong");
     }
   };
 
+  useEffect(() => {
+    if(params.roomId) {setRoomId(params.roomId);setMode("join")};
+
+  }, []);
+
   return (
     <Container>
       <Card>
-        <Title>Tic-Tac-Toe Online</Title>
+        <Title>Tic-Tac-Toe Online(1vs1)</Title>
         <ButtonContainer>
           <Button onClick={() => setMode("create")} active={mode === "create"}>
             Create Room
@@ -66,6 +92,32 @@ const LandingPage = () => {
               Create Room
             </SubmitButton>
           </Form>
+        )}
+
+        {mode === "create" && roomId && (
+          <>
+            <RoomIdBox>
+              <RoomIdText>{roomId}</RoomIdText>
+              <CopyButton
+                onClick={() => {
+                  onhandleidcopied("copyId", roomId);
+                }}
+              >
+                {iscopied.copyId ? "Copied" : "Copy"}
+              </CopyButton>
+            </RoomIdBox>
+
+            <RoomIdBox>
+              <RoomIdText>{`https://real-time-tic-toe-game-4.onrender.com/${roomId}`}</RoomIdText>
+              <CopyButton
+                onClick={() => {
+                  onhandleidcopied("copyLink",`https://real-time-tic-toe-game-4.onrender.com/${roomId}`);
+                }}
+              >
+                {iscopied.copyLink ? "Copied" : "Copy Link"}
+              </CopyButton>
+            </RoomIdBox>
+          </>
         )}
 
         {mode === "join" && (
@@ -164,5 +216,36 @@ const SubmitButton = styled.button`
 
   &:hover {
     background: #8e24aa;
+  }
+`;
+
+const RoomIdBox = styled.div`
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #2a2a2a;
+  border: 1px dashed #888;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const RoomIdText = styled.span`
+  color: #fff;
+  font-size: 1rem;
+  font-weight: bold;
+`;
+
+const CopyButton = styled.button`
+  background-color: #03dac6;
+  color: black;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+
+  &:hover {
+    background-color: #00bfa5;
   }
 `;
