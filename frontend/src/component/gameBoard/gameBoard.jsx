@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { io } from "socket.io-client";
 
-const socket = io("https://real-time-tic-toe-game-3.onrender.com"); // Use deployed backend URL
+const socket = io("https://real-time-tic-toe-game.onrender.com"); // Use deployed backend URL
 
 const GamePage = () => {
   const [board, setBoard] = useState(Array(9).fill(null));
