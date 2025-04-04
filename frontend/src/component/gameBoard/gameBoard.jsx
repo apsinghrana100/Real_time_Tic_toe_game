@@ -78,7 +78,7 @@ const GamePage = () => {
 
       <Board>
         {board.map((value, index) => (
-          <Square key={index} onClick={() => handleClick(index)} value={value}>
+          <Square key={index} onClick={() =>isXTurn && handleClick(index)} value={value} >
             {value === "X" ? <XMarker>X</XMarker> : value === "O" ? <OMarker>O</OMarker> : ""}
           </Square>
         ))}
@@ -157,7 +157,6 @@ const Square = styled.div`
   border-radius: 10px;
   cursor: pointer;
   transition: 0.3s;
-
   &:hover {
     background: #333;
   }
