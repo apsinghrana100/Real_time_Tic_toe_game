@@ -21,7 +21,7 @@ const io = new Server(server, {
   cors: {
     origin:[
       "http://localhost:3000",  // For local development
-      "https://real-time-tic-toe-game-4.onrender.com"  // Your deployed frontend
+      "https://real-time-tic-toe-game.onrender.com"  // Your deployed frontend
     ],
     methods: ["GET", "POST"],
   },
@@ -32,7 +32,7 @@ const PORT = process.env.PORT || 5000;
 // 🔹 Middleware (Order Matters)
 app.use(cors());
 app.use(cors({
-  origin: "https://real-time-tic-toe-game-4.onrender.com", // Replace with your actual frontend URL
+  origin: "https://real-time-tic-toe-game.onrender.com", // Replace with your actual frontend URL
   methods: ["GET", "POST"],
   credentials: true
 }));
