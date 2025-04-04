@@ -48,7 +48,11 @@ const GamePage = () => {
   const winner = checkWinner();
 
   useEffect(() => {
-    socket.emit("joinroom", { roomId, firstPlayer: name.firstPlayer, secondPlayer: name.secondPlayer });
+    socket.emit("joinroom", {
+      roomId,
+      firstPlayer: name.firstPlayer,
+      secondPlayer: name.secondPlayer,
+    });
     socket.on("updateName", ({ firstPlayer, secondPlayer }) => {
       setName({
         firstPlayer: firstPlayer,
@@ -72,21 +76,48 @@ const GamePage = () => {
       <RoomIdTop>Room: {roomId}</RoomIdTop>
 
       <Header>
-        <PlayerName isActive={isXTurn}>{isXTurn ? "🔥" : ""} {name.firstPlayer} (X)</PlayerName>
-        <PlayerName isActive={!isXTurn}>{!isXTurn ? "🔥" : ""} {name.secondPlayer} (O)</PlayerName>
+        <PlayerName isActive={isXTurn}>
+          {isXTurn ? "🔥" : ""} {name.firstPlayer} (X)
+        </PlayerName>
+        <PlayerName isActive={!isXTurn}>
+          {!isXTurn ? "🔥" : ""} {name.secondPlayer} (O)
+        </PlayerName>
       </Header>
 
       <Board>
         {board.map((value, index) => (
-          <Square key={index} onClick={() =>isXTurn && handleClick(index)} value={value} >
-            {value === "X" ? <XMarker>X</XMarker> : value === "O" ? <OMarker>O</OMarker> : ""}
+          <Square
+            key={index}
+            onClick={() => {
+              if (isXTurn) {
+                handleClick(index);
+              }
+              if(!isXTurn){
+                handleClick(index);
+              }
+            }}
+            value={value}
+          >
+            {value === "X" ? (
+              <XMarker>X</XMarker>
+            ) : value === "O" ? (
+              <OMarker>O</OMarker>
+            ) : (
+              ""
+            )}
           </Square>
         ))}
       </Board>
 
-      {winner && <WinnerMessage>{winner === "Draw" ? "It's a Draw!" : `Winner: ${winner}`}</WinnerMessage>}
+      {winner && (
+        <WinnerMessage>
+          {winner === "Draw" ? "It's a Draw!" : `Winner: ${winner}`}
+        </WinnerMessage>
+      )}
 
-      <ResetButton onClick={() => socket.emit("resetgame", roomId)}>Restart Game</ResetButton>
+      <ResetButton onClick={() => socket.emit("resetgame", roomId)}>
+        Restart Game
+      </ResetButton>
 
       <Footer>Developed 💚 by Ajay Pratap Singh</Footer>
     </Container>
